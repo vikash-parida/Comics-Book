@@ -1,13 +1,21 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const mongoose = require('mongoose');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
-var app = express();
+
+
+mongoose.connect('mongodb://localhost:27017/books', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+let bookRouter = require('./routes/bookRouter');
+
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +27,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
+app.use('/books', bookRouter);
+app.get('/hello',(req,res)=>{
+  console.log(req)
+  res.send("hiii vikash")})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
