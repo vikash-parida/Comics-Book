@@ -28,9 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/books', bookRouter);
-app.get('/hello',(req,res)=>{
-  console.log(req)
-  res.send("hiii vikash")})
+
 
 // catch 404 and forward to error handler
 app.use((req, res) => {
