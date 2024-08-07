@@ -9,8 +9,7 @@ const mongoose = require('mongoose');
 
 
 mongoose.connect('mongodb://localhost:27017/books', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  // useNewUrlParser: true,  useUnifiedTopology: true,
 });
 
 let bookRouter = require('./routes/bookRouter');
@@ -34,19 +33,27 @@ app.get('/hello',(req,res)=>{
   res.send("hiii vikash")})
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use((req, res) => {
+  res.status(400).json({
+      message: "Url not found"
+  });
+});
+// error handler
+app.use(function (err, req, res, next) {
+  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+      console.error(err);
+  }
+  res.status(500).json({ message: err.message });
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+process.on('uncaughtException', function (err) {
+  console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
+  process.exit(1);
+});
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+process.on('unhandledRejection', function (err) {
+  console.error((new Date).toUTCString() + ' unhandledRejection:', err.message)
+  process.exit(1);
 });
 
 module.exports = app;
